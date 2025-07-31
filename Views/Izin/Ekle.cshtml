@@ -1,0 +1,153 @@
+@model IzinTakipSistemi.Models.Izin
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yeni İzin Ekle</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 10px;
+            background: white;
+        }
+        h1 {
+            color: black;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 2px;
+        }
+        input, select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid black;
+            box-sizing: border-box;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin: 2px;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+        .btn-primary { background: blue; color: white; }
+        .btn-secondary { background: gray; color: white; }
+        .error {
+            background: red;
+            color: white;
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Yeni İzin Ekle</h1>
+
+    @if (ViewBag.Hata != null)
+    {
+        <div class="error">@ViewBag.Hata</div>
+    }
+    
+    @if (ViewBag.Bilgi != null)
+    {
+        <div style="background: #e7f3ff; padding: 10px; border-radius: 3px; margin: 10px 0;">
+            <strong>Bilgi:</strong> @ViewBag.Bilgi
+        </div>
+    }
+
+    <form method="post">
+        <div class="form-group">
+            <label>Çalışan Adı:</label>
+            <input type="text" name="CalisanAdi" required />
+        </div>
+        
+        <div class="form-group">
+            <label>Departman:</label>
+            <select name="Departman" required>
+                <option value="">Seçiniz</option>
+                <option value="İnsan Kaynakları">İnsan Kaynakları</option>
+                <option value="Bilgi Teknolojileri">Bilgi Teknolojileri</option>
+                <option value="Muhasebe">Muhasebe</option>
+                <option value="Satış">Satış</option>
+                <option value="Pazarlama">Pazarlama</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>İzin Türü:</label>
+            <select name="IzinTuru" required>
+                <option value="">Seçiniz</option>
+                <option value="Yıllık İzin">Yıllık İzin</option>
+                <option value="Hastalık İzni">Hastalık İzni</option>
+                <option value="Ücretsiz İzin">Ücretsiz İzin</option>
+                <option value="Doğum İzni">Doğum İzni</option>
+                <option value="Baba İzni">Baba İzni</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Başlangıç Tarihi:</label>
+            <input type="date" name="BaslangicTarihi" id="baslangicTarihi" required />
+        </div>
+        
+        <div class="form-group">
+            <label>Bitiş Tarihi:</label>
+            <input type="date" name="BitisTarihi" id="bitisTarihi" required />
+        </div>
+        
+        <div class="form-group">
+            <div id="gunHesaplama" style="background: #e7f3ff; padding: 10px; border-radius: 3px; margin-top: 10px; display: none;">
+                <strong>Hesaplanan İzin Günü:</strong> <span id="hesaplananGun">0</span> gün
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a href="/Izin" class="btn btn-secondary">İptal</a>
+    </form>
+
+    <script>
+        function gunHesapla(baslangic, bitis) {
+            var gun = 0;
+            var tarih = new Date(baslangic);
+            var bitisTarihi = new Date(bitis);
+            
+            while (tarih <= bitisTarihi) {
+                var gunAdi = tarih.getDay();
+                
+                if (gunAdi == 0) {
+                }
+                else if (gunAdi == 6) {
+                }
+                else {
+                    gun = gun + 1;
+                }
+                
+                tarih.setDate(tarih.getDate() + 1);
+            }
+            
+            return gun;
+        }
+
+        function tarihDegisti() {
+            var baslangic = document.getElementById('baslangicTarihi').value;
+            var bitis = document.getElementById('bitisTarihi').value;
+            
+            if (baslangic != "" && bitis != "") {
+                var gun = gunHesapla(baslangic, bitis);
+                document.getElementById('hesaplananGun').innerHTML = gun;
+                document.getElementById('gunHesaplama').style.display = 'block';
+            } else {
+                document.getElementById('gunHesaplama').style.display = 'none';
+            }
+        }
+
+        document.getElementById('baslangicTarihi').addEventListener('change', tarihDegisti);
+        document.getElementById('bitisTarihi').addEventListener('change', tarihDegisti);
+    </script>
+</body>
+</html> 
